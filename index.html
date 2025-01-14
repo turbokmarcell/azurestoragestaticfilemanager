@@ -17,9 +17,9 @@
 
     <script>
         // Az Azure Blob Storage kapcsolati információi
-        const storageAccountName = "<A TE STORAGE FIOKOD NEVE>";
+        const storageAccountName = "<myfilestorage123>";
         const containerName = "myfiles";
-        const sasToken = "<A SAS TOKEN>";
+        const sasToken = "<sv=2022-11-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-01-14T18:06:00Z&st=2025-01-14T10:06:00Z&spr=https&sig=AEZHw6mQwWQEo%2FgmhsIGDdX9rdwmIr0nUSik%2Blg91Hg%3D>";
 
         const blobServiceClient = new BlobServiceClient(`https://${storageAccountName}.blob.core.windows.net/?${sasToken}`);
         const containerClient = blobServiceClient.getContainerClient(containerName);
