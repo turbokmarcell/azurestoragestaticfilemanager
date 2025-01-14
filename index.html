@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Manager</title>
+</head>
+<body>
+    <h1>Azure File Manager</h1>
+    
+    <h2>Fájlok feltöltése</h2>
+    <input type="file" id="fileInput" />
+    <button onclick="uploadFile()">Feltöltés</button>
+
+    <h2>Fájlok letöltése</h2>
+    <ul id="fileList"></ul>
+
+    <script>
+        // Az Azure Blob Storage kapcsolati információi
+        const storageAccountName = "<A TE STORAGE FIOKOD NEVE>";
+        const containerName = "myfiles";
+        const sasToken = "<A SAS TOKEN>";
+
+        const blobServiceClient = new BlobServiceClient(`https://${storageAccountName}.blob.core.windows.net/?${sasToken}`);
+        const containerClient = blobServiceClient.getContainerClient(containerName);
+
+        // Fájl feltöltése
+        async function uploadFile() {
+            const file = document.getElementById("fileInput").files[0];
+            if (file) {
+                const blockBlobClient = containerClient.getBlockBlobClient(file.name);
+                await blockBlobClient.uploadData(file);
+                alert("Fájl sikeresen feltöltve!");
+                listFiles(); // Frissíti a fájlok listáját
+            } else {
+                alert("Válassz fájlt a feltöltéshez.");
+            }
+        }
+
+        // Fájlok listázása
+        async function listFiles() {
+            const files = containerClient.listBlobsFlat();
+            const fileList = document.getElementById("fileList");
+            fileList.innerHTML = "";
+            for await (const blob of files) {
+                const listItem = document.createElement("li");
+                listItem.textContent = blob.name;
+                const downloadLink = document.createElement("a");
+                downloadLink.href = `https://${storageAccountName}.blob.core.windows.net/${containerName}/${blob.name}?${sasToken}`;
+                downloadLink.textContent = "Letöltés";
+                listItem.appendChild(downloadLink);
+                fileList.appendChild(listItem);
+            }
+        }
+
+        // Weboldal betöltésekor listázza a fájlokat
+        listFiles();
+    </script>
+</body>
+</html>
