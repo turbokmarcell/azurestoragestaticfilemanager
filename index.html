@@ -21,7 +21,7 @@
         const containerName = "myfiles";
         const sasToken = "<sv=2022-11-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-01-14T18:06:00Z&st=2025-01-14T10:06:00Z&spr=https&sig=AEZHw6mQwWQEo%2FgmhsIGDdX9rdwmIr0nUSik%2Blg91Hg%3D>";
 
-        const blobServiceClient = new BlobServiceClient(`https://${storageAccountName}.blob.core.windows.net/?${sasToken}`);
+        const blobServiceClient = new BlobServiceClient(`https://${myfilestorage123}.blob.core.windows.net/?${sv=2022-11-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-01-14T18:06:00Z&st=2025-01-14T10:06:00Z&spr=https&sig=AEZHw6mQwWQEo%2FgmhsIGDdX9rdwmIr0nUSik%2Blg91Hg%3D}`);
         const containerClient = blobServiceClient.getContainerClient(containerName);
 
         // Fájl feltöltése
@@ -46,7 +46,7 @@
                 const listItem = document.createElement("li");
                 listItem.textContent = blob.name;
                 const downloadLink = document.createElement("a");
-                downloadLink.href = `https://${storageAccountName}.blob.core.windows.net/${containerName}/${blob.name}?${sasToken}`;
+                downloadLink.href = `https://${myfilestorage123}.blob.core.windows.net/${blob}/${blob.name}?${2022-11-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-01-14T18:06:00Z&st=2025-01-14T10:06:00Z&spr=https&sig=AEZHw6mQwWQEo%2FgmhsIGDdX9rdwmIr0nUSik%2Blg91Hg%3D}`;
                 downloadLink.textContent = "Letöltés";
                 listItem.appendChild(downloadLink);
                 fileList.appendChild(listItem);
