@@ -39,6 +39,9 @@
             }
         }
 
+        // A feltöltési függvény globális kontextusba helyezése
+        window.uploadFile = uploadFile;
+
         // Fájlok listázása
         async function listFiles() {
             const fileList = document.getElementById("fileList");
