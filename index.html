@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>File Manager</title>
+    <title>Azure File Manager</title>
 </head>
 <body>
     <h1>Azure File Manager</h1>
@@ -15,13 +15,15 @@
     <h2>Fájlok letöltése</h2>
     <ul id="fileList"></ul>
 
-    <script>
-        // Az Azure Blob Storage kapcsolati információi
-        const storageAccountName = "<myfilestorage123>";
-        const containerName = "myfiles";
-        const sasToken = "<sv=2022-11-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-01-14T18:06:00Z&st=2025-01-14T10:06:00Z&spr=https&sig=AEZHw6mQwWQEo%2FgmhsIGDdX9rdwmIr0nUSik%2Blg91Hg%3D>";
+    <script type="module">
+        import { BlobServiceClient } from "https://cdn.jsdelivr.net/npm/@azure/storage-blob@12.12.0/+esm";
 
-        const blobServiceClient = new BlobServiceClient(`https://${myfilestorage123}.blob.core.windows.net/?${sv=2022-11-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-01-14T18:06:00Z&st=2025-01-14T10:06:00Z&spr=https&sig=AEZHw6mQwWQEo%2FgmhsIGDdX9rdwmIr0nUSik%2Blg91Hg%3D}`);
+        // Az Azure Blob Storage kapcsolati információi
+        const storageAccountName = "myfilestorage123";
+        const containerName = "blob";
+        const sasToken = "sv=2022-11-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-01-14T18:06:00Z&st=2025-01-14T10:06:00Z&spr=https&sig=AEZHw6mQwWQEo%2FgmhsIGDdX9rdwmIr0nUSik%2Blg91Hg%3D";
+
+        const blobServiceClient = new BlobServiceClient(`https://${storageAccountName}.blob.core.windows.net/?${sasToken}`);
         const containerClient = blobServiceClient.getContainerClient(containerName);
 
         // Fájl feltöltése
@@ -39,15 +41,17 @@
 
         // Fájlok listázása
         async function listFiles() {
-            const files = containerClient.listBlobsFlat();
             const fileList = document.getElementById("fileList");
             fileList.innerHTML = "";
-            for await (const blob of files) {
+            for await (const blob of containerClient.listBlobsFlat()) {
                 const listItem = document.createElement("li");
                 listItem.textContent = blob.name;
+
                 const downloadLink = document.createElement("a");
-                downloadLink.href = `https://${myfilestorage123}.blob.core.windows.net/${blob}/${blob.name}?${2022-11-02&ss=bfqt&srt=sco&sp=rwdlacupiytfx&se=2025-01-14T18:06:00Z&st=2025-01-14T10:06:00Z&spr=https&sig=AEZHw6mQwWQEo%2FgmhsIGDdX9rdwmIr0nUSik%2Blg91Hg%3D}`;
-                downloadLink.textContent = "Letöltés";
+                downloadLink.href = `https://${storageAccountName}.blob.core.windows.net/${containerName}/${blob.name}?${sasToken}`;
+                downloadLink.textContent = " Letöltés";
+                downloadLink.target = "_blank";
+
                 listItem.appendChild(downloadLink);
                 fileList.appendChild(listItem);
             }
