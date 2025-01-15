@@ -55,9 +55,16 @@ Mielőtt elkezdenéd a projektet, győződj meg róla, hogy rendelkezel az aláb
 3. Kattints a **Review + Create** gombra, majd a **Create** gombra.
 
 ## 4. Resource Sharing (CORS) beállítása
-
-###Lépések###
-
+CORS (Cross-Origin Resource Sharing) egy olyan HTTP funkció, amely lehetővé teszi, hogy egy webes alkalmazás (például JavaScript-kód) az egyik domain (például https://example.com) alól elérje egy másik domain (például https://myblobstorage.blob.core.windows.net) erőforrásait.
+## Lépések
+1. Navigálj a létrehozott Storage Accounton belül a **Resource sharing (CORS)** fülre
+2. A **Blob service** menüpont alatt található adatokat töltsdd ki
+   -*Allowed origins:*Ez határozza meg, hogy mely domainek férhetnek hozzá az erőforrásokhoz.(Példa kedvéért tegyél *-ot, de ez magas biztonsági kockázatot jelent)
+   -*Allowed methods:*Ezek azok az HTTP-módszerek, amelyeket engedélyezel (pl.:GET: Adatok lekérése, POST: Adatok feltöltése, PUT: Adatok módosítása, DELETE: Adatok törlése)
+   -*Allowed headers:*Mely HTTP-fejléc értékeket engedélyezel a kérésben (Példa kedvéért tegyél *-ot, de ez magas biztonsági kockázatot jelent)
+   -*Exposed headers:*Ezek azok a HTTP-fejlécek, amelyeket a válasz tartalmazhat(Példa kedvéért tegyél *-ot, de ez magas biztonsági kockázatot jelent)
+   -*Max age:* A böngésző mennyi ideig tárolhatja a CORS-elővizsgálati (preflight) választ cache-ben, másodpercben (pl.:200)
+   
 ## 4. Blob Konténer Létrehozása
 
 ### Lépések:
