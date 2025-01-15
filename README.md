@@ -1,4 +1,4 @@
-# Statikus weboldal hosztolása Static Web App segítségével, és feltöltött fájlok tárolása Storage Accountban(container) | Azure Blob Storage, Static Web App és GitHub CI/CD Pipeline Integráció
+# Statikus weboldal hosztolása Static Web App segítségével, és feltöltött fájlok tárolása Storage Accountban(container) | Azure Blob Storage, Static Web App és GitHub CI/CD Pipeline Integráció (hu)
 
 Ez a leírás bemutatja, hogyan hozhatsz létre egy Azure Storage Accountot, konfigurálhatod a blob tárhelyet, hozhatsz létre egy Static Web App-et és integrálhatod a GitHub CI/CD pipeline-nal statikus weboldalak telepítéséhez.
  
@@ -120,3 +120,131 @@ Helyettesítsd a `<storage_account_name>` és `<container_name>` értékeket a s
 2. Nézd meg a GitHub Actions alatt a pipeline futását.
 3. Ha sikeres, ellenőrizd a blob konténert az Azure Portálon.
 
+Understood! Here's the revised English version with all formatting exactly as requested:
+
+---
+
+## **Hosting a Static Website with Static Web App and Storing Uploaded Files in a Storage Account (Container) | Azure Blob Storage, Static Web App, and GitHub CI/CD Pipeline Integration (eng)**
+
+This guide explains how to create an Azure Storage Account, configure blob storage, set up a Static Web App, and integrate it with a GitHub CI/CD pipeline for deploying static websites.
+
+### **Prerequisites**
+
+Before starting, ensure you have the following:
+
+- **Azure Account**: If you don't have one, create it [here](https://azure.microsoft.com/en-us/pricing/purchase-options/azure-account/search?icid=free-search&ef_id=_k_EAIaIQobChMIop6rouryigMVJZGDBx1y3CuNEAAYASAAEgLWsPD_BwE_k_&OCID=AIDcmmip7xznjm_SEM__k_EAIaIQobChMIop6rouryigMVJZGDBx1y3CuNEAAYASAAEgLWsPD_BwE).
+- **GitHub Account**: Sign up if you don’t have one [here](https://github.com/signup?ref_cta=Sign+up&ref_loc=header+logged+out&ref_page=%2F&source=header-home).
+- **Visual Studio Code** or another text editor.
+- **Git** installed on your machine.
+
+## **1. Creating and Configuring a GitHub Repository**
+
+### **Steps:**
+1. Create a new repository on [GitHub](https://github.com/).
+2. Place your static website source files in the root directory of the repository.
+
+## **2. Creating a Static Web App**
+
+### **Steps:**
+1. Sign in to the [Azure Portal](https://portal.azure.com/).
+2. Navigate to **Static Web Apps**, then click **Create**.
+3. Enter the required details:
+   - **Resource Group**: Create a new one or select an existing one (e.g., `staticwebappsite`).
+   - **Static Web App Name**: Enter a name (e.g., `mystaticwebapp`).
+   - **Hosting Plan**: Choose the appropriate hosting plan (e.g., Free: For hobby or personal projects).
+   - **Region**: Global.
+   - **Deployment details**: Select the appropriate source, in this case, GitHub. If your GitHub account is not yet linked to Azure, link it now.
+   - **Organization**: Select the appropriate organization (your GitHub account name where the source files are uploaded).
+   - **Repository**: Select the appropriate repository (the repository in your GitHub account where the source files are uploaded).
+   - **Branch**: Select the appropriate branch (default is `main`).
+   - **Build Details**: Configure specific details:
+     - **Build Presets**: Automatically detected by the service (e.g., Custom (detected)).
+     - **App location**: Specify the main folder of your project (e.g., `/` if the application is in the root folder).
+     - **API location**: Specify the location of your API (if your application includes an API, provide the folder name here).
+     - **Output location**: Specify the build output location (can be left empty).
+4. Click **Review + Create**, then click **Create**.
+5. If everything is set correctly in the **Build Details** step, a `.github/workflows` folder will appear in your GitHub repository.
+6. After the *Static Web App* resource is loaded, click on the resource, and under the **Get Started** menu, click **Visit your site** to test if the website loads.
+
+## **3. Creating a Storage Account**
+
+### **Steps:**
+1. Navigate to **Storage Accounts**, then click **+Create**.
+2. Enter the required details:
+   - **Resource Group**: Use the Resource Group created in the **Static Web Apps** step.
+   - **Storage Account Name**: Enter a unique name (e.g., `myfilestorage1234`).
+   - **Region**: Select the appropriate region (e.g., West Europe, Central US, etc.).
+   - **Primary Service**: Azure Blob Storage or Azure Data Lake Storage Gen 2.
+   - **Performance**: Select the desired performance level (e.g., Standard).
+   - **Redundancy**: Choose the redundancy option (e.g., Locally-redundant storage (LRS)).
+3. Click **Review + Create**, then click **Create**.
+
+## **4. Configuring Resource Sharing (CORS)**
+
+CORS (Cross-Origin Resource Sharing) is an HTTP feature that allows a web application (e.g., JavaScript code) on one domain (e.g., `https://example.com`) to access resources on another domain (e.g., `https://myblobstorage.blob.core.windows.net`).
+
+### **Steps:**
+1. Within the created Storage Account, go to the **Resource Sharing (CORS)** tab.
+2. Under **Blob service**, fill in the following fields:
+   - **Allowed origins**: Specify the domains allowed to access the resources (e.g., use `*` for all domains, though this is a security risk).
+   - **Allowed methods**: Specify the HTTP methods allowed (e.g., `GET`, `POST`, `PUT`, `DELETE`).
+   - **Allowed headers**: Specify which HTTP headers are allowed in requests (e.g., `*` for all headers, though this is a security risk).
+   - **Exposed headers**: Specify which HTTP headers can be exposed in responses (e.g., `*` for all headers, though this is a security risk).
+   - **Max age**: Specify how long browsers can cache the CORS preflight response, in seconds (e.g., `200`).
+
+## **5. Creating a Blob Container**
+
+### **Steps:**
+1. Within the created Storage Account, navigate to the **Containers** tab.
+2. Click **+ Container**.
+3. Enter a name for the container (e.g., `blob`) and set the **Public Access Level** to **Private**.
+4. Click **Create**.
+
+## **6. Generating a SAS Token**
+
+A SAS (Shared Access Signature) token allows secure access to the blob container.
+
+### **Steps:**
+1. In the created container menu, select **Shared access signature**.
+2. Set the required permissions (**Read**, **Write**, **List**, etc.).
+3. Set the expiration time (e.g., 1 week).
+4. Click **Generate SAS and connection string**.
+5. Copy the generated **Blob SAS token** and include it in your HTML code on GitHub.
+
+## **7. Setting Up a GitHub Actions Workflow**
+
+### **Example Workflow File:**
+```yaml
+name: Azure Blob Storage CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Upload to Azure Blob Storage
+      env:
+        AZURE_STORAGE_SAS: ${{ secrets.AZURE_STORAGE_SAS }}
+      run: |
+        az storage blob upload-batch \
+          --destination https://<storage_account_name>.blob.core.windows.net/<container_name> \
+          --source . \
+          --pattern "*"
+```
+Replace `<storage_account_name>` and `<container_name>` with your details.
+
+:red_circle: This is automatically created by GitHub in most cases.
+
+## **8. Testing the Pipeline**
+
+1. Push your code to the `main` branch.
+2. Check the pipeline run under GitHub Actions.
+3. If successful, verify the blob container on the Azure Portal.
